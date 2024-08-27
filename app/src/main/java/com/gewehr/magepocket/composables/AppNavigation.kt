@@ -11,7 +11,7 @@ fun AppNavigation() {
 
     NavHost(navController = navController, startDestination = "firstScreen") {
         composable("firstScreen") { FirstScreen(navController) }
-        composable("Inventory") { InventoryScreen() }
-        composable("Grimore") { GrimoreScreen() }
+        composable("Inventory") { InventoryScreen(navController) }
+        composable("Grimore") { GrimoreScreen(navController) }
     }
 }
