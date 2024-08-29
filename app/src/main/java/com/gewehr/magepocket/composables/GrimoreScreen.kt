@@ -1,5 +1,6 @@
 package com.gewehr.magepocket.composables
 
+import SpellSlotsBar
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -33,7 +34,9 @@ fun GrimoreScreen(navController: NavHostController){
         topBar = {
             TopAppBar(
                 title = {
-                    Box(modifier = Modifier.fillMaxSize().padding(end = 50.dp),
+                    Box(modifier = Modifier
+                        .fillMaxSize()
+                        .padding(end = 50.dp),
                         contentAlignment = Alignment.Center){
                         Text(
                             text = "Grimore",
@@ -60,6 +63,6 @@ fun GrimoreScreen(navController: NavHostController){
         },
         containerColor = Color(0xFFD2B48C)
     ) {it ->
-        Row(modifier = Modifier.padding(it)){}
+        Row(modifier = Modifier.padding(it)){ SpellSlotsBar()}
     }
 }
