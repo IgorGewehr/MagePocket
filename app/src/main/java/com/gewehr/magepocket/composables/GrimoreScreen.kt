@@ -25,11 +25,15 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import com.gewehr.magepocket.data.SpellSlot
+import com.gewehr.magepocket.data.SpellSlotViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun GrimoreScreen(navController: NavHostController){
+fun GrimoreScreen(navController: NavHostController, spellSlotViewModel: SpellSlotViewModel){
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -63,6 +67,6 @@ fun GrimoreScreen(navController: NavHostController){
         },
         containerColor = Color(0xFFD2B48C)
     ) {it ->
-        Row(modifier = Modifier.padding(it)){ SpellSlotsBar()}
+        Row(modifier = Modifier.padding(it)){ SpellSlotsBar(spellSlotViewModel)}
     }
 }

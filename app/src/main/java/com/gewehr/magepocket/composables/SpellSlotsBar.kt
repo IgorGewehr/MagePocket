@@ -2,9 +2,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -13,31 +11,27 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.gewehr.magepocket.R
+import com.gewehr.magepocket.data.SpellSlotViewModel
+import com.gewehr.magepocket.data.SpellSlot
 
 // Função que cria uma lista de spell slots por nível de magia
 @Composable
-fun SpellSlotsBar() {
+fun SpellSlotsBar(spellSlotViewModel: SpellSlotViewModel) {
     val maxSlots = 4
-    val spellSlots = remember {
-        mutableStateListOf(
-            0, // Level 1
-            0, // Level 2
-            0, // Level 3
-            0, // Level 4
-            0, // Level 5
-            0, // Level 6
-            0, // Level 7
-            0, // Level 8
-            0  // Level 9
-        )
-    }
+
+    // Coletar o estado atual dos slots do ViewModel
+    val spellSlots by spellSlotViewModel.spellSlots.collectAsState(initial = List(9) { 0 })
+
+    var singleColumn by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
             .fillMaxHeight()
             .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.Start
     ) {
         for (i in 0 until 9) {
             val level = i + 1
@@ -50,16 +44,18 @@ fun SpellSlotsBar() {
                 // Mostrar o número romano
                 Text(
                     text = getRomanNumeral(level),
-                    color = Color.Black
+                    color = Color.Black,
+                    modifier = Modifier.width(30.dp)  // Mantém o número em posição fixa
                 )
 
                 // Botão de adicionar slot
                 IconButton(onClick = {
-                    if (slots < maxSlots) {
-                        spellSlots[i] = slots + 1
+                    val newSlotCount = if (slots < maxSlots) {
+                        slots + 1
                     } else {
-                        spellSlots[i] = 0 // Reseta os slots se atingir o máximo
+                        0 // Reseta os slots se atingir o máximo
                     }
+                    spellSlotViewModel.saveSpellSlot(level, newSlotCount)
                 }) {
                     Icon(
                         painter = painterResource(id = R.drawable.grimore_icon),
@@ -72,21 +68,34 @@ fun SpellSlotsBar() {
                 Column(
                     verticalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
-                    for (row in 0 until 2) { // Duas linhas
-                        Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                            for (j in row until slots step 2) {
-                                val isUsed = remember { mutableStateOf(false) }
-
-                                Box(
-                                    modifier = Modifier
-                                        .size(18.dp)
-                                        .clip(RoundedCornerShape(4.dp))
-                                        .background(if (isUsed.value) Color.Red else Color.Blue)
-                                        .padding(4.dp)
-                                        .clickable {
-                                            isUsed.value = !isUsed.value
-                                        }
-                                )
+                    if (singleColumn) {
+                        // Uma coluna
+                        for (j in 0 until slots) {
+                            val isUsed = remember { mutableStateOf(false) }
+                            Box(
+                                modifier = Modifier
+                                    .size(18.dp)
+                                    .clip(RoundedCornerShape(4.dp))
+                                    .background(if (isUsed.value) Color.Red else Color.Blue)
+                                    .padding(4.dp)
+                                    .clickable { isUsed.value = !isUsed.value }
+                            )
+                        }
+                    } else {
+                        // Duas colunas
+                        for (row in 0 until 2) {
+                            Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                                for (j in row until slots step 2) {
+                                    val isUsed = remember { mutableStateOf(false) }
+                                    Box(
+                                        modifier = Modifier
+                                            .size(18.dp)
+                                            .clip(RoundedCornerShape(4.dp))
+                                            .background(if (isUsed.value) Color.Red else Color.Blue)
+                                            .padding(4.dp)
+                                            .clickable { isUsed.value = !isUsed.value }
+                                    )
+                                }
                             }
                         }
                     }
@@ -97,10 +106,27 @@ fun SpellSlotsBar() {
     }
 }
 
+
+
 // Função para converter números em números romanos
 fun getRomanNumeral(number: Int): String {
     val romanNumerals = listOf(
         "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX"
     )
     return if (number in 1..9) romanNumerals[number - 1] else number.toString()
+}
+
+// Componente de busca de magias (placeholder)
+@Composable
+fun MagicSearchBar() {
+    // Aqui pode ser implementada a lógica para o buscador de magias
+    Text(
+        text = "Search Bar Placeholder",
+        color = Color.White,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp)
+            .background(Color.Gray)
+            .padding(8.dp)
+    )
 }
