@@ -1,6 +1,7 @@
 package com.gewehr.magepocket.data
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
@@ -35,9 +36,11 @@ class SpellSlotViewModel(application: Application) : AndroidViewModel(applicatio
         }
     }
 
+
     fun saveSpellSlot(level: Int, slots: Int, colors: List<Boolean>) {
         viewModelScope.launch {
             val spellSlot = SpellSlot(level = level, slots = slots, colors = colors)
+            Log.d("SpellSlot", "Saving SpellSlot: $spellSlot")
             spellSlotDao.insertSpellSlot(spellSlot)
             _spellSlots.update { currentSlots ->
                 currentSlots.toMutableList().apply {
