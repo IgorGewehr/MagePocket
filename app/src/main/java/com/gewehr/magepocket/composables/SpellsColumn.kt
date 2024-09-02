@@ -1,5 +1,6 @@
 package com.gewehr.magepocket.composables
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -26,9 +27,9 @@ fun SpellsColumn() {
     var filteredSpells by remember { mutableStateOf(allSpells.take(5)) }
 
     var searchQuery by remember { mutableStateOf("") }
-    var selectedClass by remember { mutableStateOf("Classe") }
-    var selectedLevel by remember { mutableStateOf("Nível") }
-    var selectedSchool by remember { mutableStateOf("Escola") }
+    var selectedClass by remember { mutableStateOf("Class") }
+    var selectedLevel by remember { mutableStateOf("Level") }
+    var selectedSchool by remember { mutableStateOf("School") }
 
     Column(
         modifier = Modifier
@@ -37,11 +38,11 @@ fun SpellsColumn() {
             .background(color = Color(0xFFEDE0C8))
     ) {
         TextField(
-            value = "",
-            onValueChange = {},
+            value = searchQuery,
+            onValueChange = { query -> searchQuery = query },
             placeholder = {
                 Text(
-                    text = "Buscar magia...",
+                    text = "Search spell...",
                     color = Color(0xFF5E3C16),
                     fontSize = 20.sp,
                     fontFamily = FontFamily.Cursive
@@ -78,6 +79,11 @@ fun SpellsColumn() {
                 )
             }
         )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Lista de Feitiços
+        SpellList(spells = filteredSpells)
     }
 }
 
@@ -91,9 +97,9 @@ fun ImprovedFilterSection(
     onSchoolSelected: (String) -> Unit,
     onSearchClicked: () -> Unit
 ) {
-    val classOptions = listOf("Bárbaro", "Bardo", "Bruxo", "Clérigo", "Druida", "Feiticeiro", "Guerreiro", "Ladino", "Mago", "Monge", "Paladino", "Patrulheiro")
-    val levelOptions = listOf("Cantrip", "1º Nível", "2º Nível", "3º Nível", "4º Nível", "5º Nível", "6º Nível", "7º Nível", "8º Nível", "9º Nível")
-    val schoolOptions = listOf("Abjuração", "Adivinhação", "Conjuração", "Encantamento", "Evocação", "Ilusão", "Necromancia", "Transmutação")
+    val classOptions = listOf("","Barbarian", "Bard", "Warlock", "Cleric", "Druid", "Sorcerer", "Fighter", "Rogue", "Wizard", "Monk", "Paladin", "Ranger")
+    val levelOptions = listOf("","Cantrip", "1st Level", "2nd Level", "3rd Level", "4th Level", "5th Level", "6th Level", "7th Level", "8th Level", "9th Level")
+    val schoolOptions = listOf("","Abjuration", "Divination", "Conjuration", "Enchantment", "Evocation", "Illusion", "Necromancy", "Transmutation")
 
     Column(
         modifier = Modifier
@@ -140,11 +146,10 @@ fun ImprovedFilterSection(
             ),
             shape = RoundedCornerShape(8.dp)
         ) {
-            Text("Pesquisar", fontSize = 18.sp)
+            Text("Search", fontSize = 18.sp)
         }
     }
 }
-
 
 @Composable
 fun DropdownMenuWithLabel(
@@ -191,9 +196,10 @@ fun DropdownMenuWithLabel(
 
 @Composable
 fun SpellList(spells: List<Spell>) {
+    Log.d("SpellList", "Displaying ${spells.size} spells")
     LazyColumn(
         modifier = Modifier
-            .fillMaxSize()
+            .fillMaxSize() // Certifica-se de que a LazyColumn usa todo o espaço disponível
             .background(color = Color(0xFFFAF0E6), shape = RoundedCornerShape(8.dp))
             .padding(16.dp)
     ) {
@@ -220,12 +226,12 @@ fun SpellItem(spell: Spell) {
             modifier = Modifier.padding(bottom = 8.dp)
         )
         Text(
-            text = "Nível: ${if (spell.level == 0) "Cantrip" else spell.level}",
+            text = "Level: ${if (spell.level == 0) "Cantrip" else "${spell.level} Level"}",
             fontSize = 16.sp,
             color = Color(0xFF5E3C16)
         )
         Text(
-            text = "Escola: ${spell.school}",
+            text = "School: ${spell.school}",
             fontSize = 16.sp,
             color = Color(0xFF5E3C16)
         )
@@ -250,32 +256,57 @@ fun applyFilters(
     levelFilter: String,
     schoolFilter: String
 ): List<Spell> {
+    Log.d("applyFilters", "Applying filters: nameQuery=$nameQuery, classFilter=$classFilter, levelFilter=$levelFilter, schoolFilter=$schoolFilter")
+
     return spells.filter { spell ->
+        // Verificação do filtro de nome
         val matchesName = if (nameQuery.isNotBlank()) {
-            spell.name.contains(nameQuery, ignoreCase = true)
+            spell.name.contains(nameQuery, true)
         } else {
             true
         }
 
-        val matchesClass = if (classFilter != "Classe") {
-            spell.classes.contains(nameQuery, ignoreCase = true)
+        // Verificação do filtro de classe
+        val matchesClass = if (classFilter != "Class" && classFilter.isNotBlank()) {
+            val charFilter = classFilter.firstOrNull()
+            charFilter?.let { filter ->
+                spell.classes.any { it == filter }
+            } ?: false //
         } else {
             true
         }
 
-        val matchesLevel = if (levelFilter != "Nível") {
-            val level = if (levelFilter == "Cantrip") 0 else levelFilter.substringBefore("º").toInt()
+        // Verificação do filtro de nível
+        val matchesLevel = if (levelFilter != "Level" && levelFilter.isNotBlank()) {
+            val level = when (levelFilter) {
+                "Cantrip" -> 0
+                "1st Level" -> 1
+                "2nd Level" -> 2
+                "3rd Level" -> 3
+                "4th Level" -> 4
+                "5th Level" -> 5
+                "6th Level" -> 6
+                "7th Level" -> 7
+                "8th Level" -> 8
+                "9th Level" -> 9
+                else -> -1  // Valor de fallback, se necessário
+            }
             spell.level == level
         } else {
             true
         }
 
-        val matchesSchool = if (schoolFilter != "Escola") {
+        // Verificação do filtro de escola
+        val matchesSchool = if (schoolFilter != "School" && schoolFilter.isNotBlank()) {
             spell.school.equals(schoolFilter, ignoreCase = true)
         } else {
             true
         }
 
+        // Retorna verdadeiro se todos os critérios corresponderem
         matchesName && matchesClass && matchesLevel && matchesSchool
-    }.take(20) // Limita a 20 resultados para desempenho
+    }.also { result ->
+        Log.d("applyFilters", "Filtered result count: ${result.size}")
+    }.take(13) // Limita a 20 resultados para desempenho
 }
+

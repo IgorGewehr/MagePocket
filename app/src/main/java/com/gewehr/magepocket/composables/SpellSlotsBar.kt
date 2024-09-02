@@ -28,7 +28,7 @@ fun SpellSlotsBar(spellSlotViewModel: SpellSlotViewModel) {
     Column(
         modifier = Modifier
             .fillMaxHeight()
-            .padding(16.dp),
+            .padding(2.dp),
         horizontalAlignment = Alignment.Start
     ) {
         for (i in spellSlots.indices) {
@@ -42,7 +42,7 @@ fun SpellSlotsBar(spellSlotViewModel: SpellSlotViewModel) {
                 Text(
                     text = getRomanNumeral(level),
                     color = Color.Black,
-                    modifier = Modifier.width(30.dp)
+                    modifier = Modifier.width(26.dp)
                 )
 
                 IconButton(onClick = {
@@ -69,7 +69,7 @@ fun SpellSlotsBar(spellSlotViewModel: SpellSlotViewModel) {
                             val color = spellSlot.colors[j]
                             Box(
                                 modifier = Modifier
-                                    .size(18.dp)
+                                    .size(32.dp)
                                     .clip(RoundedCornerShape(4.dp))
                                     .background(if (color) Color.Red else Color.Blue)
                                     .padding(4.dp)
@@ -87,7 +87,7 @@ fun SpellSlotsBar(spellSlotViewModel: SpellSlotViewModel) {
                                     val color = spellSlot.colors[j]
                                     Box(
                                         modifier = Modifier
-                                            .size(18.dp)
+                                            .size(14.dp)
                                             .clip(RoundedCornerShape(4.dp))
                                             .background(if (color) Color.Red else Color.Blue)
                                             .padding(4.dp)
@@ -103,7 +103,7 @@ fun SpellSlotsBar(spellSlotViewModel: SpellSlotViewModel) {
                     }
                 }
             }
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(8.dp))
         }
     }
 }
@@ -118,17 +118,3 @@ fun getRomanNumeral(number: Int): String {
     return if (number in 1..9) romanNumerals[number - 1] else number.toString()
 }
 
-// Componente de busca de magias (placeholder)
-@Composable
-fun MagicSearchBar() {
-    // Aqui pode ser implementada a lógica para o buscador de magias
-    Text(
-        text = "Search Bar Placeholder",
-        color = Color.White,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp)
-            .background(Color.Gray)
-            .padding(8.dp)
-    )
-}

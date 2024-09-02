@@ -1,5 +1,4 @@
-{
-  "allSpells": [
+[
     {
       "name": "Acid Splash",
       "classes": "Sorcerer, Wizard",
@@ -5326,4 +5325,3 @@
       "page": 289
     }
   ]
-}
