@@ -5,10 +5,11 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import android.content.Context
 
-@Database(entities = [SpellSlot::class], version = 2)
+@Database(entities = [SpellSlot::class, InventoryItem::class], version = 4)
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun spellSlotDao(): SpellSlotDao
+    abstract fun inventoryItemDao(): InventoryItemDao
 
     companion object {
         @Volatile
@@ -19,12 +20,11 @@ abstract class AppDatabase : RoomDatabase() {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
                     AppDatabase::class.java,
-                    "spell_slot_database"
+                    "app_database"
                 ).fallbackToDestructiveMigration() // Força a destruição e recriação do banco de dados
                     .build()
                 INSTANCE = instance
                 instance
-
             }
         }
     }

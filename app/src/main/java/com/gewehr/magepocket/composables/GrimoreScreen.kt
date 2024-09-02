@@ -43,7 +43,7 @@ fun GrimoreScreen(navController: NavHostController, spellSlotViewModel: SpellSlo
                         .padding(end = 50.dp),
                         contentAlignment = Alignment.Center){
                         Text(
-                            text = "Grimore",
+                            text = "Grimoire",
                             style = TextStyle(
                                 fontSize = 36.sp,
                                 fontWeight = FontWeight.Bold,
