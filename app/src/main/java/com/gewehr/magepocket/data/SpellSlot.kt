@@ -7,5 +7,6 @@ import androidx.room.PrimaryKey
 data class SpellSlot(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val level: Int,
-    val slots: Int
+    val slots: Int,
+    val colors: List<Boolean>
 )

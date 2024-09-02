@@ -67,6 +67,9 @@ fun GrimoreScreen(navController: NavHostController, spellSlotViewModel: SpellSlo
         },
         containerColor = Color(0xFFD2B48C)
     ) {it ->
-        Row(modifier = Modifier.padding(it)){ SpellSlotsBar(spellSlotViewModel)}
+        Row(modifier = Modifier.padding(it)){
+            SpellSlotsBar(spellSlotViewModel)
+            SpellsColumn()
+        }
     }
 }

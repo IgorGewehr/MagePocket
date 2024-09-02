@@ -21,9 +21,7 @@ import com.gewehr.magepocket.data.SpellSlot
 @Composable
 fun SpellSlotsBar(spellSlotViewModel: SpellSlotViewModel) {
     val maxSlots = 4
-
-    // Coletar o estado atual dos slots do ViewModel
-    val spellSlots by spellSlotViewModel.spellSlots.collectAsState(initial = List(9) { 0 })
+    val spellSlots by spellSlotViewModel.spellSlots.collectAsState()
 
     var singleColumn by remember { mutableStateOf(false) }
 
@@ -33,29 +31,28 @@ fun SpellSlotsBar(spellSlotViewModel: SpellSlotViewModel) {
             .padding(16.dp),
         horizontalAlignment = Alignment.Start
     ) {
-        for (i in 0 until 9) {
+        for (i in spellSlots.indices) {
             val level = i + 1
-            val slots = spellSlots[i]
+            val spellSlot = spellSlots[i]
 
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                // Mostrar o número romano
                 Text(
                     text = getRomanNumeral(level),
                     color = Color.Black,
-                    modifier = Modifier.width(30.dp)  // Mantém o número em posição fixa
+                    modifier = Modifier.width(30.dp)
                 )
 
-                // Botão de adicionar slot
                 IconButton(onClick = {
-                    val newSlotCount = if (slots < maxSlots) {
-                        slots + 1
+                    val newSlotCount = if (spellSlot.slots < maxSlots) {
+                        spellSlot.slots + 1
                     } else {
                         0 // Reseta os slots se atingir o máximo
                     }
-                    spellSlotViewModel.saveSpellSlot(level, newSlotCount)
+                    val newColors = spellSlot.colors.take(newSlotCount) + List(maxSlots - newSlotCount) { false }
+                    spellSlotViewModel.saveSpellSlot(level, newSlotCount, newColors)
                 }) {
                     Icon(
                         painter = painterResource(id = R.drawable.grimore_icon),
@@ -64,36 +61,41 @@ fun SpellSlotsBar(spellSlotViewModel: SpellSlotViewModel) {
                     )
                 }
 
-                // Coluna para os slots
                 Column(
                     verticalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
                     if (singleColumn) {
-                        // Uma coluna
-                        for (j in 0 until slots) {
-                            val isUsed = remember { mutableStateOf(false) }
+                        for (j in 0 until spellSlot.slots) {
+                            val color = spellSlot.colors[j]
                             Box(
                                 modifier = Modifier
                                     .size(18.dp)
                                     .clip(RoundedCornerShape(4.dp))
-                                    .background(if (isUsed.value) Color.Red else Color.Blue)
+                                    .background(if (color) Color.Red else Color.Blue)
                                     .padding(4.dp)
-                                    .clickable { isUsed.value = !isUsed.value }
+                                    .clickable {
+                                        val newColors = spellSlot.colors.toMutableList()
+                                        newColors[j] = !color
+                                        spellSlotViewModel.saveSpellSlot(level, spellSlot.slots, newColors)
+                                    }
                             )
                         }
                     } else {
-                        // Duas colunas
                         for (row in 0 until 2) {
                             Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                                for (j in row until slots step 2) {
-                                    val isUsed = remember { mutableStateOf(false) }
+                                for (j in row until spellSlot.slots step 2) {
+                                    val color = spellSlot.colors[j]
                                     Box(
                                         modifier = Modifier
                                             .size(18.dp)
                                             .clip(RoundedCornerShape(4.dp))
-                                            .background(if (isUsed.value) Color.Red else Color.Blue)
+                                            .background(if (color) Color.Red else Color.Blue)
                                             .padding(4.dp)
-                                            .clickable { isUsed.value = !isUsed.value }
+                                            .clickable {
+                                                val newColors = spellSlot.colors.toMutableList()
+                                                newColors[j] = !color
+                                                spellSlotViewModel.saveSpellSlot(level, spellSlot.slots, newColors)
+                                            }
                                     )
                                 }
                             }
@@ -101,7 +103,7 @@ fun SpellSlotsBar(spellSlotViewModel: SpellSlotViewModel) {
                     }
                 }
             }
-            Spacer(modifier = Modifier.height(16.dp)) // Espaço entre os níveis
+            Spacer(modifier = Modifier.height(16.dp))
         }
     }
 }

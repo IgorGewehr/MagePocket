@@ -1,11 +1,12 @@
 package com.gewehr.magepocket.data
-
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
 import android.content.Context
 
-@Database(entities = [SpellSlot::class], version = 1)
+@Database(entities = [SpellSlot::class], version = 2)
+@TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun spellSlotDao(): SpellSlotDao
 
@@ -19,9 +20,11 @@ abstract class AppDatabase : RoomDatabase() {
                     context.applicationContext,
                     AppDatabase::class.java,
                     "spell_slot_database"
-                ).build()
+                ).fallbackToDestructiveMigration() // Força a destruição e recriação do banco de dados
+                    .build()
                 INSTANCE = instance
                 instance
+
             }
         }
     }
