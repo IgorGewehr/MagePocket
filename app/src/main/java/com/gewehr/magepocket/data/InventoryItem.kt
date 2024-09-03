@@ -7,5 +7,6 @@ import androidx.room.PrimaryKey
 data class InventoryItem(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val name: String,
-    val category: String
+    val category: String, // Pode ser "Armors", "Weapons", "Coins", etc.
+    val value: Int = 0 // Para armazenar valores das moedas
 )

@@ -1,3 +1,4 @@
+
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
@@ -104,6 +105,7 @@ fun InventoryScreen(navController: NavHostController) {
         }
     }
 }
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
