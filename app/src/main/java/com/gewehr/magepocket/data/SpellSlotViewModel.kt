@@ -18,7 +18,8 @@ class SpellSlotViewModel(application: Application) : AndroidViewModel(applicatio
 
     private val spellSlotDao = AppDatabase.getDatabase(application).spellSlotDao()
 
-    private val _spellSlots = MutableStateFlow(List(9) { SpellSlot(level = it + 1, slots = 0, colors = List(4) { false }) })
+    // Não inicializar com valores padrão, deixar vazio inicialmente
+    private val _spellSlots = MutableStateFlow<List<SpellSlot>>(emptyList())
     val spellSlots: StateFlow<List<SpellSlot>> = _spellSlots
 
     init {
@@ -28,19 +29,19 @@ class SpellSlotViewModel(application: Application) : AndroidViewModel(applicatio
     private fun loadSpellSlots() {
         viewModelScope.launch {
             val slots = spellSlotDao.getAllSpellSlots()
-            _spellSlots.update { currentSlots ->
-                currentSlots.mapIndexed { index, defaultSlot ->
-                    slots.find { it.level == index + 1 } ?: defaultSlot
-                }
+            // Apenas atualize a lista de slots se houver algo retornado do banco de dados
+            if (slots.isNotEmpty()) {
+                _spellSlots.value = slots
+            } else {
+                // Se não houver slots no banco de dados, inicialize com os valores padrão
+                _spellSlots.value = List(9) { SpellSlot(level = it + 1, slots = 0, colors = List(4) { false }) }
             }
         }
     }
 
-
     fun saveSpellSlot(level: Int, slots: Int, colors: List<Boolean>) {
         viewModelScope.launch {
             val spellSlot = SpellSlot(level = level, slots = slots, colors = colors)
-            Log.d("SpellSlot", "Saving SpellSlot: $spellSlot")
             spellSlotDao.insertSpellSlot(spellSlot)
             _spellSlots.update { currentSlots ->
                 currentSlots.toMutableList().apply {
