@@ -1,5 +1,6 @@
 package com.gewehr.magepocket.composables
 
+import InventoryScreen
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
