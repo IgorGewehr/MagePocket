@@ -5,7 +5,7 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import android.content.Context
 
-@Database(entities = [SpellSlot::class, InventoryItem::class, Coins::class], version = 7)
+@Database(entities = [SpellSlot::class, InventoryItem::class, Coins::class], version = 8)
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun spellSlotDao(): SpellSlotDao
