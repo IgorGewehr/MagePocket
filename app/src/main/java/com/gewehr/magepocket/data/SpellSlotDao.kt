@@ -8,7 +8,6 @@ import androidx.room.Update
 
 @Dao
 interface SpellSlotDao {
-
     @Query("SELECT * FROM spell_slots WHERE level = :level")
     suspend fun getSpellSlotByLevel(level: Int): SpellSlot?
 
